@@ -1,0 +1,55 @@
+﻿## Ignore Visual Studio temporary files, build results, and user-specific files
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code settings
+.vscode/
+.vs/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Rider project files
+.idea/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NPM packages
+node_modules/
+
+# Optional files for ASP.NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Database files
+*.mdf
+*.ldf
+
+# Backup & cache files
+*.bak
+*.tmp
+*.cache
+
+# DotCover
+.idea/.idea.DotSettings
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Others
+*.log
+*.vsidx
