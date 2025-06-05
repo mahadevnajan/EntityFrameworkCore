@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 30px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .success {
+            color: green;
+            font-size: 1em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>User Login</h2>
+        <form id="loginForm">
+            <label>First Name</label>
+            <input type="text" id="firstName" required />
+            <div id="firstNameError" class="error"></div>
+
+            <label>Last Name</label>
+            <input type="text" id="lastName" />
+
+            <label>Email</label>
+            <input type="email" id="email" required />
+            <div id="emailError" class="error"></div>
+
+            <label>Password</label>
+            <input type="password" id="password" required />
+            <div id="passwordError" class="error"></div>
+
+            <button type="submit">Login</button>
+            <!-- Add this after your existing login button -->
+            <div style="text-align: center; margin-top: 10px;">
+                <p>New User? <a href="signIn.html">Sign In Here</a></p>
+            </div>
+
+        </form>
+
+        <div id="responseMessage" class="success"></div>
+    </div>
+
+    <script>
+  const form = document.getElementById("loginForm");
+  const message = document.getElementById("responseMessage");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // Clear old messages
+    message.textContent = '';
+    document.getElementById("firstNameError").textContent = '';
+    document.getElementById("emailError").textContent = '';
+    document.getElementById("passwordError").textContent = '';
+
+    // Get values
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    // Validate input
+    let hasError = false;
+
+    if (!firstName) {
+      document.getElementById("firstNameError").textContent = "First name is required.";
+      hasError = true;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      document.getElementById("emailError").textContent = "Invalid email format.";
+      hasError = true;
+    }
+
+    if (password.length < 6) {
+      document.getElementById("passwordError").textContent = "Password must be at least 6 characters.";
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    // Prepare payload
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      password
+    };
+
+    // Send POST request
+    try {
+      const res = await fetch("https://localhost:7001/api/Login/User", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        message.textContent = "Login successful!";
+        message.style.color = "green";
+      } else {
+        const errText = await res.text();
+        message.textContent = "Login failed: " + errText;
+        message.style.color = "red";
+      }
+    } catch (err) {
+      message.textContent = "API Error: " + err.message;
+      message.style.color = "red";
+    }
+  });
+    </script>
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 ﻿using DbEntityFrameworkCore.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace DbEntityFrameworkCore.Controllers
 {
@@ -22,20 +24,56 @@ namespace DbEntityFrameworkCore.Controllers
         public async Task<IActionResult> AddNewBook([FromBody]Book model)
         {
 
-            if (model == null) {
+            if (string.IsNullOrEmpty(model.Title)) {
 
 
                 //var book = new 
                 //appContext.Books.Add(model);
                 //await appContext.SaveChangesAsync();
                 // return Ok(model);
-                return BadRequest();
+                return BadRequest("Title Should not be empty");
             }
 
             _appDbContext.Books.Add(model);
             await _appDbContext.SaveChangesAsync();
 
-            return Ok(model);
+            return Ok(new
+            {
+                Message = "Book Saved Successfully",
+               // Data = model
+            });
+
         }
-    }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllBook()
+        {
+
+          var book = await _appDbContext.Books.ToListAsync();
+
+            return Ok(book);
+        }
+
+        //if you want insert bulk data into book , so need to use AddRange method
+
+        [HttpPost("AddBulkBook")]
+        public async Task<IActionResult> AddBookData([FromBody] List<Book> model)
+        {
+            if (model == null || model.Count == 0)
+            {
+                return BadRequest("Failed to add book");
+            }
+            else
+            {
+                var bukBook = this._appDbContext.Books.AddRangeAsync(model);
+                await _appDbContext.SaveChangesAsync();
+
+                return Ok( new
+                {
+                    message = "Successfully Add Books",
+                    Data = bukBook
+                });
+            }
+            }
+        }
 }

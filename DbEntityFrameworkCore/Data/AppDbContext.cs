@@ -32,6 +32,8 @@ namespace DbEntityFrameworkCore.Data
         public DbSet<BookPrice> BookPrices {  get; set; }
 
         public DbSet<Currency?>Currencies { get; set; }
+        public DbSet<Login>UserLogin { get; set; }
+
 
     }
 }

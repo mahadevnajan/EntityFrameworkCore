@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Books</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .book-form {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Add Books</h2>
+
+    <div id="book-list"></div>
+
+    <button onclick="addBookForm()">+ Add Book</button>
+    <button onclick="submitBooks()">Submit All Books</button>
+
+    <p id="message"></p>
+
+    <script>
+    let bookIndex = 0;
+
+    function addBookForm() {
+        const container = document.createElement('div');
+        container.className = 'book-form';
+        container.dataset.index = bookIndex;
+
+        container.innerHTML = `
+            <h3>Book ${bookIndex + 1}</h3>
+            <input placeholder="Title" class="title" />
+            <textarea placeholder="Description" class="description"></textarea>
+            <input type="number" placeholder="No of Pages" class="pages" />
+            <input type="number" placeholder="Language ID" class="language" />
+            <label>
+                <input type="checkbox" class="isActive" checked /> Is Active
+            </label>
+            <button onclick="removeBookForm(this)">Remove</button>
+        `;
+
+        document.getElementById('book-list').appendChild(container);
+        bookIndex++;
+    }
+
+    function removeBookForm(btn) {
+        btn.parentElement.remove();
+    }
+
+    async function submitBooks() {
+        const books = [];
+        document.querySelectorAll('.book-form').forEach(div => {
+            const title = div.querySelector('.title').value.trim();
+            if (!title) return;
+
+            books.push({
+                title,
+                description: div.querySelector('.description').value.trim(),
+                noOfPages: parseInt(div.querySelector('.pages').value),
+                languageId: parseInt(div.querySelector('.language').value),
+                isActive: div.querySelector('.isActive').checked,
+                createdOn: new Date().toISOString()
+            });
+        });
+
+        if (books.length === 0) {
+            document.getElementById('message').textContent = "Please add at least one book with a title.";
+            document.getElementById('message').className = "error";
+            return;
+        }
+
+        try {
+            const response = await fetch('https://localhost:7001/api/Book/AddBulkBook', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(books)
+            });
+
+            if (response.ok) {
+                document.getElementById('message').textContent = "Books submitted successfully!";
+                document.getElementById('message').className = "success";
+                document.getElementById('book-list').innerHTML = '';
+                bookIndex = 0;
+            } else {
+                throw new Error('API error');
+            }
+        } catch (err) {
+            document.getElementById('message').textContent = "Failed to submit books.";
+            document.getElementById('message').className = "error";
+        }
+    }
+
+    // Add one book form by default
+    addBookForm();
+    </script>
+
+</body>
+</html>
