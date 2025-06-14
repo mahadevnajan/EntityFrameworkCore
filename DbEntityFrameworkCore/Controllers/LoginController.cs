@@ -10,6 +10,7 @@ namespace DbEntityFrameworkCore.Controllers
     public class LoginController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
+        private string message;
 
         public LoginController(AppDbContext appDbContext)
         {
@@ -73,5 +74,24 @@ namespace DbEntityFrameworkCore.Controllers
             user.Password = "";
             return Ok(user);
         }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> GetId([FromRoute] int id)
+        {
+
+            var user = _appDbContext.UserLogin.FirstOrDefault(x => x.Id == id);
+              
+                 
+            if (user == null)
+            {
+                return NotFound(message =$"User With ID{id} not found");
+            }
+            _appDbContext.UserLogin.Remove((Login)user);
+            await _appDbContext.SaveChangesAsync();
+            return Ok(message = $"User with ID {id} has been deleted successfully.");
+
+        }
+
     }
 }
