@@ -9,6 +9,8 @@
 
         public string Password { get; set; } = string.Empty;
 
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
+
 
     }
 }

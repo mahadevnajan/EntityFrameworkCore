@@ -93,5 +93,12 @@ namespace DbEntityFrameworkCore.Controllers
 
         }
 
+        [HttpGet("GetAllUser")]
+        public async Task<ActionResult<IEnumerable<Login>>> GetAllUser()
+        {
+            var allUsers = await _appDbContext.UserLogin.ToListAsync();
+            return Ok(allUsers);
+        }
+
     }
 }

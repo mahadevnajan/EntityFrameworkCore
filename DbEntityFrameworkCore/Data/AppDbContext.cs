@@ -33,6 +33,9 @@ namespace DbEntityFrameworkCore.Data
 
         public DbSet<Currency?>Currencies { get; set; }
         public DbSet<Login>UserLogin { get; set; }
+        public DbSet<JobApplication>JobApply { get; set; }
+
+
 
 
     }
